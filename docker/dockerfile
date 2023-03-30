@@ -1,0 +1,10 @@
+FROM ubuntu:18.04
+RUN apt-get update --fix-missing -y
+RUN apt-get upgrade -y
+RUN apt-get install git build-essential python diffstat texinfo gawk chrpath dos2unix wget unzip libncurses-dev libssl-dev bc cpio rsync flex bison -y
+RUN apt-get install build-essential software-properties-common -y
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test -y
+RUN apt-get update -y
+RUN apt-get install gcc-9 g++-9 -y
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
+RUN update-alternatives --config gcc
