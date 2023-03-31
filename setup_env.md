@@ -1,5 +1,11 @@
 ## ENV SETUP
 
+### GET LINUX IMAGE
+
+~~~
+git clone git://git.ti.com/ti-linux-kernel/ti-linux-kernel.git linux --depth 1 --branch ti-linux-4.14.y
+~~~
+
 ### BUILD DOCKER IMAGE 
 
 ~~~
