@@ -32,6 +32,7 @@ modules.builtin
 *.lzo
 *.patch
 *.gcno
+*.dwo
 
 #
 # Top-level generic files
@@ -51,6 +52,8 @@ Module.symvers
 /debian/
 
 buildroot*/
+buildroot
+uboot/
 
 #
 # git files that we don't want to ignore even it they are dot-files
