@@ -22,6 +22,6 @@ docker run -it --name bbb_bsp_dev -v /home/malinbay/workspace/bbb/:/home/ bbb_bs
 ## BUILD
 
 ~~~
-cd lkm-1
+cd 001_hello_world_module
 make 
 ~~~
