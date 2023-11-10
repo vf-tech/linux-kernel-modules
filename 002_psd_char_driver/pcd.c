@@ -133,8 +133,15 @@ const struct file_operations pcd_fops =
 /* This is module init entry point */
 static int __init psd_driver_init(void)
 {
+    int ret;
+
 	/*1. Dynamically allocate a device number */
-	alloc_chrdev_region(&device_number,0,1,"psd");
+    ret = alloc_chrdev_region(&device_number,0,1,"psd");
+    if(ret < 0)
+    {
+        pr_err("Dev allocation failed\n");
+        goto out;
+    }
 
 	/*2. Initiaize the cdev struct with fops */
 	cdev_init(&pcd_cdev, &pcd_fops);
@@ -143,18 +150,44 @@ static int __init psd_driver_init(void)
 	pcd_cdev.owner = THIS_MODULE;
 
 	/*4. Register Device to VFS */
-	cdev_add(&pcd_cdev, device_number, 1);
+	ret = cdev_add(&pcd_cdev, device_number, 1);
+	if(ret < 0)
+	{
+	    pr_err("Device add failed \n");
+        goto unreg_chrdev;
+	}
 
     /*5 Create Class */
     class_pcd = class_create(THIS_MODULE,"pcd_class");
+    if(IS_ERR(class_pcd))
+    {
+        pr_err("Class creation failed\n");
+        ret = PTR_ERR(class_pcd);
+        goto cdev_del;
+    }
 
     /*6 Create device and Populate sysfs */
     device_pcd = device_create(class_pcd,NULL,device_number,NULL,"pcd");
+    if(IS_ERR(device_pcd))
+    {
+        pr_err("Device creation failed\n");
+        ret = PTR_ERR(device_pcd);
+        goto class_del;
+    }
 
     pr_info("PCD Module init was successful \n");
     pr_info("Device Number <major>:<minor>=%d:%d \n",MAJOR(device_number),MINOR(device_number));
 
     return 0;
+    
+class_del:
+    class_destroy(class_pcd);
+cdev_del:
+    cdev_del(&pcd_cdev);
+unreg_chrdev:
+    unregister_chrdev_region(device_number,1);
+out:
+    return ret;
 }
 
 /* This is module exit entry point */
