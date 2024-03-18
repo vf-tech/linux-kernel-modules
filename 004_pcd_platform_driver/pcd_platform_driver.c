@@ -8,6 +8,36 @@
 
 #define MAX_DEVICES (10)
 
+/* DEVICE ID PRIVATE DATA */
+struct pcdev_config_item
+{
+    uint32_t config_item_1;
+    uint32_t config_item_2;
+};
+
+enum pcdev_names
+{
+    PCDEVA1X,
+    PCDEVB1X,
+    PCDEVC1X,
+    PCDEVD1X
+};
+
+const struct pcdev_config_item pcdev_config_item_table[] = {
+    [PCDEVA1X] = {.config_item_1 = 11, .config_item_2 = 101},
+    [PCDEVB1X] = {.config_item_1 = 21, .config_item_2 = 102},
+    [PCDEVC1X] = {.config_item_1 = 31, .config_item_2 = 103},
+    [PCDEVD1X] = {.config_item_1 = 41, .config_item_2 = 104}
+};
+
+const struct platform_device_id pcdev_platform_device_id_table[] = {
+    [PCDEVA1X] = {.name = "pcdev-A1x", .driver_data = PCDEVA1X},
+    [PCDEVB1X] = {.name = "pcdev-B1x", .driver_data = PCDEVB1X},
+    [PCDEVC1X] = {.name = "pcdev-C1x", .driver_data = PCDEVC1X},
+    [PCDEVD1X] = {.name = "pcdev-D1x", .driver_data = PCDEVD1X},
+    {}, //NULL TERMINATOR
+};
+
 /*Device Private data */
 struct pcdev_private_data
 {
@@ -124,6 +154,9 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
     pr_info("Device buffer size = %d\n", dev_data->pdata.size);
     pr_info("Device permission = %d\n", dev_data->pdata.perm);
 
+    pr_info("Device config item-1: %d", pcdev_config_item_table[pdev->id_entry->driver_data].config_item_1);
+    pr_info("Device config item-2: %d", pcdev_config_item_table[pdev->id_entry->driver_data].config_item_2);
+
     /* 3. Dynamically allocate memory for the device buffer using platform data*/
     dev_data->buffer = devm_kzalloc(&pdev->dev, dev_data->pdata.size, GFP_KERNEL);
     if(dev_data->buffer == NULL)
@@ -210,6 +243,7 @@ struct platform_driver pcd_platform_driver =
 {
     .probe = pcd_platform_driver_probe,
     .remove = pcd_platform_driver_remove,
+    .id_table = pcdev_platform_device_id_table,
     .driver = {
         .name = "pseudo-char-device"
         }
