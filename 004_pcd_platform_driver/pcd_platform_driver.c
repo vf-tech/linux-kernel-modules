@@ -130,8 +130,7 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
     if(pdata == NULL)
     {
         pr_info("No Platform Data available\n");
-        ret = -EINVAL;
-        goto out;
+        return -EINVAL;
     }
 
     /* 2. Dynamically allocate memory for the DEVICE private data */
@@ -139,8 +138,7 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
     if(dev_data == NULL)
     {
         pr_info("No Free RAM Data available\n");
-        ret = -ENOMEM;
-        goto out;
+        return -ENOMEM;
     }
 
     /* Save the device private data in platform device structure */
@@ -162,8 +160,7 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
     if(dev_data->buffer == NULL)
     {
         pr_info("Cannot allocate data for data buffer\n");
-        ret = -ENOMEM;
-        goto out_free_dev_data;
+        return -ENOMEM;
     }
 
     /* 4. Get the device number */
@@ -181,7 +178,7 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
     if(ret < 0)
     {
         pr_err("C-Device[%d] add failed \n", dev_data->dev_num);
-        goto out_cdev_del;
+        return ret;
     }
     pr_info("Device Number added <major>:minor=%d:%d\n",MAJOR(dev_data->dev_num),MINOR(dev_data->dev_num));
 
@@ -191,7 +188,8 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
     {
         pr_err("Device creation failed\n");
         ret = PTR_ERR(pcdrv_data.device_pcd);
-        goto out_class_del;
+        cdev_del(&dev_data->cdev);
+        return ret;
     }
 
     pcdrv_data.total_devices++;
@@ -200,16 +198,6 @@ int pcd_platform_driver_probe(struct platform_device *pdev)
     pr_info("Total Device Count: %d\n",pcdrv_data.total_devices);
     /* 7. Error Handling */
     return 0;
-
-out_class_del:
-    cdev_del(&dev_data->cdev);
-out_cdev_del:
-    devm_kfree(&pdev->dev, dev_data->buffer);
-out_free_dev_data:
-    devm_kfree(&pdev->dev, dev_data);
-out:
-    pr_info("Device probe failed\n");
-    return ret;
 }
 
 /* gets called when a device is removed from system */
