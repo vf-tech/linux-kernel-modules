@@ -23,5 +23,7 @@ docker run -it --name bbb_bsp_dev -v /home/malinbay/workspace/bbb/:/home/ bbb_bs
 
 ~~~
 cd 001_hello_world_module
+export CC=/home/malinbay/workspace/raspi3b-bsp/arm-buildroot-linux-gnueabihf_sdk-buildroot/bin/arm-none-linux-gnueabihf-
+export KERNEL_DIR=/home/malinbay/workspace/raspi3b-bsp/linux/
 make 
 ~~~

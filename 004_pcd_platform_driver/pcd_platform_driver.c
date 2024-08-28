@@ -2,6 +2,7 @@
 #include <linux/fs.h>
 #include <linux/cdev.h>
 #include <linux/uaccess.h>
+#include <linux/mod_devicetable.h>
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 #include "platform.h"
@@ -30,12 +31,12 @@ const struct pcdev_config_item pcdev_config_item_table[] = {
     [PCDEVD1X] = {.config_item_1 = 41, .config_item_2 = 104}
 };
 
-const struct platform_device_id pcdev_platform_device_id_table[] = {
+struct platform_device_id pcdev_platform_device_id_table[] = {
     [PCDEVA1X] = {.name = "pcdev-A1x", .driver_data = PCDEVA1X},
     [PCDEVB1X] = {.name = "pcdev-B1x", .driver_data = PCDEVB1X},
     [PCDEVC1X] = {.name = "pcdev-C1x", .driver_data = PCDEVC1X},
     [PCDEVD1X] = {.name = "pcdev-D1x", .driver_data = PCDEVD1X},
-    {}, //NULL TERMINATOR
+    {} //NULL TERMINATOR
 };
 
 /*Device Private data */
